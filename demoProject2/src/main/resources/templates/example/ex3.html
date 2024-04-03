@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타임리프 예제3</title>
+</head>
+<body>
+	<h1>타임리프 예제 3</h1>	
+
+	<h3>링크(URL) 조합에 사용되는 Spring EL (@{ }) </h3>
+	
+	<ul>
+		<li>
+			<a href="/board">게시판(/board)</a>
+		</li>
+		<li>
+			<a href="/board?key=제목&query=검색어"></a>
+		</li>
+		
+		<li>
+			<!-- 타임리프를 이용한 쿼리스트링 작성방법 -->
+			<a th:href="@{/board(key=${key}, query=${query} )}">
+			<!-- /board?key=제목&query=검색어  -->
+				@ {} 사용
+			</a>
+		</li>
+		
+		<li>
+			PathVariable : 주소 중에 일부분을 변수값처럼 사용
+			
+			url 중에 특정 부분이 HTTP요청마다 변할 가능성이 있는 경우, PathVariable 을 사용한다. 
+			<a href="/example/ex3/1">/example/ex3/1</a>
+			
+		</li>		
+		<li>
+			PathVariable : 주소 중에 일부분을 변수값처럼 사용
+			<a href="/example/ex3/2">/example/ex3/2</a>
+			
+		</li>		
+		<li>
+			PathVariable : 주소 중에 일부분을 변수값처럼 사용
+			<a href="/example/ex3/3">/example/ex3/3</a>
+		</li>		
+		
+		<li>
+			<a th:href="@{/example/ex3/{number}(number=${boardNo})}">shdjfgashsdhgf</a>
+		</li>
+		
+		<li>
+			<a href="/example/ex4">타임리프 예제 4</a>
+		</li>
+	
+	</ul>
+	
+	
+	
+	
+</body>
+</html>

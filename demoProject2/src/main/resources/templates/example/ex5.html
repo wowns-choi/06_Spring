@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타임리프 예제5</title>
+	
+	<style>
+		.red{
+			color: red;
+		}
+		.green{
+			color: green;
+		}
+		.deco{
+			text-decoration: underline;
+			
+		}
+		
+	</style>
+	
+</head>
+<body>
+	
+	
+	
+	<h1> 타임리프 예제 5</h1>
+	<h3>th:inline = "javascript" 속성</h3>
+	<pre>
+		- script 태그에 작성하는 속성
+		- 타임리프 문법으로 출력된 내용/값을 
+		JS 에 알맞은 타입으로 변환
+	</pre>
+	
+	<h3 id="message"></h3>
+	<h3 id="num1"></h3>
+	
+	<hr>
+	
+	<h3> th:classappend 속성 : 요소에 class 속성값을 동적으로 추가 </h3>
+	
+	<h4 th:classappend="red">th:classappend 테스트중...</h4>
+	
+	<h4  th:classappend="green" 	class="red">	th:classappend 테스트중... </h4> <!-- 타임리프와 일반 class 로 준 css 가 경합하면? 타임리프가 이기더라-->
+	
+	<!-- num1 이 10000보다 클 경우 green 아니면 red -->
+	<h4 th:classappend="${num1 > 10000} ? green : red">th:classappend 테스트중...</h4>
+	<h4 class="deco" th:class="	${num1 > 10000} ? green : red">th:classappend 테스트중...</h4> <!--th:class 는 덮어씌워버림 -->
+	<h4 class="deco" th:classappend="	${num1 > 10000} ? green : red">th:classappend 테스트중...</h4>  <!-- th:classappend 는 추가시켜줌 -->
+
+	<hr>
+	
+	<h3>안전 탐색 연산자 : ${객체?.필드명} </h3>
+	<pre>
+		${여기} 여기 안에 들어온 값이, 어떤 "객체의 필드"를 불러오는 것일 경우,
+		그 필드의 값이 null 이더라도 오류발생 안시키고 출력이 안되도록만 해줌.	
+		구분해서 생각해봐야할 점은 뭐냐면, 
+		${여기} 여기 안에 쓰인 값이 없을 경우 그냥 출력이 안되는데, 
+		만약, ${여기} 여기 안에 쓰인 값이 어떤 객체의 필드에 접근하는 것이라면, 		org.thymeleaf.exceptions.TemplateInputException:  이런 예외가 터짐.
+	</pre>
+	
+	<h4 th:text="${member?.memberNo}">
+	</h4>
+	
+	<hr>
+	
+	<h3>${#numbers.sequence(시작, 끝 [, step])} : 번호 발생기 </h3>
+	<pre>
+		- 시작부터 끝까지 번호로만 이루어진 숫자 배열을 생성해줌.
+		
+		ex)  ${#numbers.sequence(1, 5)}  => [1,2,3,4,5] 이런 배열이 생성됨.
+		
+		[ 왜 사용할까? ]
+		- 타임리프 반복문 th:each 는 향상된 for문으로 
+			일반 for문의 동작(시작부터 끝까지 몇씩 증가하며 반복하는 행위를 말함)을 못하기 때문에
+			이를 해결하기 위해서 사용
+		
+		<ul>
+			<!-- 11 부터 시작해서 20까지 2씩 증가하며 반복해라 --> 
+			<li th:each="i : ${#numbers.sequence(11, 20, 2)}" th:text="|테스트 ${i}|"> 
+			</li>
+		</ul>
+		
+		
+	</pre>
+	
+	
+	
+	
+	
+	<script th:inline="javascript">
+		// JS Inline - Natural Template
+		// 스크립트 태그 내부에서 타임리프의 변수나 연산을 사용할 수 있게 함.
+		
+		// - HTML 파일 독립 실행 시
+		//  JS 내부 타임리프 코드 오류를 발생하지 않게함.
+		// +HTML 문법 오류(컴파일 오류)
+		
+		const message = /*[[${message}]]*/ "망고빙수 먹어봤어?"; 
+		//만약, html 파일을 단독으로 실행했을 때에는 망고빙수 먹어봤어? 가 실행됨.  
+		//컨트롤러를 거쳐 model 에 담겼을 때에는 컨트롤러에서 담아준 메세지가 출력되겠지. 
+		
+		const num1 = /*[[${num1}]]*/ 100;
+		
+		document.querySelector('#message').innerText = message;
+		document.querySelector('#num1').innerText = num1;
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타임리프 예제4</title>
+</head>
+<body>
+	
+	<h1> 타임리프 예제 4 </h1>
+	
+	<h3>타임리프 조건문 [1] - th:if / th:unless</h3>
+	
+	<pre>
+		th:if = ${ 조건식 }
+		-  조건식이 true 인 경우에만
+		해당 속성이 작성된 요소를 화면에 출력
+		
+		th:unless = ${ 조건식 } 
+		- 조건식이 false 인 경우에만
+		해당 속성이 작성된 요소를 화면에 출력
+	</pre>
+	
+	<th:block th:if="${std == null}">
+		<h4>aaaaaaaaaaaaa</h4> <!-- 현재 model std 담아줬으므로, 조건식 false  이므로, 출력안됨 -->
+	</th:block>
+	
+	<th:block th:unless="${std == null}">
+		<h4>bbbbbbbbbbbbb</h4> 		<!-- 현재 model std 담아줬으므로, 조건식 false  이므로, 출력 됨 -->
+	</th:block>
+	
+	
+	<h3> th:if / th:unless 조건식에 변수명/값 하나만 작성한 경우</h3>
+	
+	<pre>
+		if 문에 작성된 값이 있으면 true 로 평가됨
+		if 문에 작성된 값이 없으면 false 로 평가됨
+	</pre>
+	
+	<h4 th:if="${std}">
+		std 있어요
+	</h4>
+	
+	<h4 th:if="${temp}">
+		temp 있어요
+	</h4>
+	
+	<h4 th:unless="${std}">
+		std 없어요
+	</h4>
+	
+	<hr><hr>
+	
+	<h3>타임리프 조건문 [2] - th: switch / th:case</h3>
+	<th:block th:switch="${num}">
+		<th:block th:case="100">
+			100 맞아여
+		</th:block>
+		<th:block th:case="200">
+			200 맞아여
+		</th:block>
+		<!-- 디폴트값은 아래처럼 * 을 이용해서 쓰면 된다. -->
+		<th:block th:case="*">나머지</th:block>
+	</th:block>
+	
+	<hr>
+	
+	<h3>삼항 연산자</h3>
+	<pre>
+		- 타임리프 속성(th:)에 삼항연산자 작성가능
+		조건식 ? true인경우 : false인경우
+	</pre>
+	
+	<h4 th:text="${std.age == 30} ? '서른' : '서른아님' "></h4>
+	
+	<hr>
+	
+	<h3>Elvis ( ?: )</h3>
+	
+	<pre>
+		[작성법]
+		값A   ?:   값이 없을때
+		
+		- 좌측과 우측으로 나눌 때, 
+		- 좌측에 값이 있으면 좌측이, 없으면 우측이 출력.
+	</pre>
+	
+	<p th:text="${member} ?: '회원데이터없음' "> <!-- member는 model에 담아준적없으므로 회원데이터없음이 출력 -->
+	</p>
+	
+	<p th:text="${std} ?: '학생데이터없음' "> 	<!-- 	std는 model에 담아준적있으므로 toString 출력됨-->
+	</p>
+	
+	
+	<h3>No-Operation 연산자 ( 값 ?: _)</h3>
+	
+	<pre>
+		- 조건식의 값이 없을 경우 (==null)
+		타임리프 코드를 해석하지 않는 연산자
+		
+		- 타임리프 코드 해석하지 않는다는 것은
+		-> 일반 HTML 태그로 동작
+		-> 따라서, th:block 같은 타임리프 태그는 안된다는 거고, html 태그만 된다는 거임 .
+		-> 조건식에 값이 없을 경우 html 태그 여는 태그와 닫는태그 사이에 있는 텍스트가 출력됨.
+	</pre>
+	
+	
+	<p th:text="${member} ?: _  ">
+		회원데이터 없음
+	</p>
+	
+	<p th:text="${std} ?: _ "> 	
+		학생데이터 없음
+	</p>
+	
+	
+	<div style="height: 100vh;"></div>
+</body>
+</html>
