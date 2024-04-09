@@ -20,5 +20,8 @@ public class Student {
 	private String name; // 이름
 	private int age; // 나이
 	
-	
+
 }
+
+
+

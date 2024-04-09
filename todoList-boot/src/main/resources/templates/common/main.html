@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+	
+	
+	
+
+	<h1> Todo List</h1>
+	
+	<hr>
+	
+	<h3>
+		<a href="/ajax/main">
+					TodoList - Ajax 버전
+		</a>
+	</h3>
+	
+	<!-- 할 일 추가 form -->
+	<form action="/todo/add" method="post">
+		<input type="text" name="todoTitle" placeholder="할 일 제목 입력해주세요">
+		<textarea 	name="todoContent" cols="50" rows="5" placeholder="상세 내용"></textarea>
+		<button>추가하기</button>
+	</form>
+	
+	
+	
+	<!-- model 에 담아준 list 자료구조의 개수를 꺼내오는 방법이다.-->
+	<!-- 	${#lists.size(todoList)} == ${todoList,size()}
+		${todoList,size()} 이렇게 그냥 쓰지? 
+	-->	
+	<h3 th:text="|전체 Todo 개수 : ${#lists.size(todoList)} 개 / 
+		완료된 Todo 개수 : ${findCount} 개
+	|"></h3>
+	
+	<table border="1">
+		<thead>
+			<th>번호</th>
+			<th>할 일 제목</th>
+			<th>완료 여부</th>
+			<th>등록 날짜</th>
+		</thead>
+		<tbody>
+			<tr th:each="todo  : ${ todoList}" th:object="${todo}">
+				<td th:text="*{todoNo}"></td>
+				<td>
+					<a th:text="*{todoTitle}" href="#" th:href="@{/todo/detail(todoNo=*{todoNo})}"></a>					
+				</td>
+
+				<td th:text="*{todoContent}"></td>
+				<td th:text="*{complete}"></td>
+				<td th:text="*{regDate}"></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	
+	
+	
+	
+	
+
+	
+
+	<div style="height: 100vh;"></div>
+
+	<!-- footer.html 조각을 해당 위치에 대입
+	-->
+	<th:block th:replace="~{common/footer}"></th:block>
+	
+	
+	
+	
+			
+    
+</body>
+</html>
