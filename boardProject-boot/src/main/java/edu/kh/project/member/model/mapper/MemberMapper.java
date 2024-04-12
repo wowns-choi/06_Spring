@@ -18,6 +18,10 @@ public interface MemberMapper {
 	 * @return
 	 */
 	int checkEmail(String memberEmail);
+
+	int checkNickname(String inputNickname);
+
+	int signup(Member inputMember);
 	
 
 	

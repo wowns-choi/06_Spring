@@ -77,6 +77,48 @@ public class MemberServiceImpl implements MemberService{
 	public int checkEmail(String memberEmail) {
 		return mapper.checkEmail(memberEmail);
 	}
+
+	@Override
+	public int checkNickname(String memberNickname) {
+		return mapper.checkNickname(memberNickname);
+	}
+
+	@Override
+	public int signup(Member inputMember, String[] memberAddress) {
+		
+		// 주소가 입력되지 않으면
+		// inputMember.getMemberAddress() -> ' , , '
+		// memberAddress -> [, ,]
+		
+		if(!inputMember.getMemberAddress().equals(", ,")) {
+			
+			// String.join("구분자", 배열)
+			// => 배열의 모든 요소 사이에 "구분자"를 추가하여 하나의 문자열로 만들어 반환하는 메서드
+			
+			// 구분자로 "^^^" 쓴 이유 : 
+			// -> 주소, 상세주소에 없는 특수문자 작성
+			// -> 나중에 다시 3분할 할 때 구분자로 이용할 예정
+			String address = String.join("^^^", memberAddress); 
+			
+			// inputMember 주소로 합쳐진 주소를 세팅
+			inputMember.setMemberAddress(address);
+			
+			
+		}else {
+			//사용자가 주소입력 하지 않은 경우
+			inputMember.setMemberAddress(null); // null 저장
+
+		}
+		
+		// 이메일, 비밀번호(평문형태), 닉네임, 전화번호, 주소
+		// 비밀번호 해싱
+		String encPw = bCryptPasswordEncoder.encode(inputMember.getMemberPw());
+		inputMember.setMemberPw(encPw);
+		
+		// 회원 가입 매퍼 메서드 호출
+		return mapper.signup(inputMember);
+
+	}
 	
 	
 }

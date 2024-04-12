@@ -1,10 +1,17 @@
 package edu.kh.project.email.model.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import edu.kh.project.email.model.mapper.EmailMapper;
 import jakarta.mail.internet.MimeMessage;
@@ -23,6 +30,10 @@ public class EamilServiceImpl implements EmailService{
 	//EmailConfig 설정이 적용된 객체(메일 보내기 기능)
 	private final JavaMailSender mailSender;
 
+	// 타임리프(템플릿 엔진) 을 이용해서 html 코드를 java 코드로 변환해주는 객체
+	private final SpringTemplateEngine templateEngine;
+	
+	
 	// 이메일 보내기 
 	@Override
 	public String sendEamil(String htmlName, String email) {
@@ -62,7 +73,18 @@ public class EamilServiceImpl implements EmailService{
 			helper.setText(authKey); // 조만간 변경해볼거임. html 보내도록 해줄거임. 
 			
 			// CID (Content - ID) 를 이용해 메일에 이미지 첨부할 수 있음. 
+			// (파일첨부와는 다름. 이메일 내용 자체에 사용할 이미지 첨부)
+			// 파일을 보내는 느낌 x, html에 박아 넣을 이미지를 말함.
 			// 나중에 로고 추가해볼것.
+			helper.addInline("logo", new ClassPathResource("static/images/logo.jpg")); //ClassPathResource : classpath(src/main/resources) 에 있는 자원을 보낼 이메일에 넣겠다. 
+			// -> 로고 이미지를 메일 내용에 첨부하는데
+			// 사용하고 싶으면 "logo" 라는 id를 작성해라
+			//        <img src="cid:logo" width="200px;"> 여기서의 src="cid:log" 이거말하는거임.
+			
+			
+			helper.setText( loadHtml(authKey, htmlName), true );
+			// 세번째 파라미터인 true 는 HTML 코드 해석 여부를 말한다.  true니까, HTML코드를 HTML로 인식하겠다는 뜻 ( innerHTML 해석 )
+
 			
 			// 메일 보내기
 			mailSender.send(mimeMessage);
@@ -73,10 +95,54 @@ public class EamilServiceImpl implements EmailService{
 			return null;
 		}
 		
+		//****************이메일 + 인증번호를 TB_AUTH_KEY 라는 테이블에 저장해줘야 함***********************************
+		 // 마이바티스 xml 파일에는 하나밖에 못주는데, 전달할 데이터가 2개인 경우
+		// DTO 를 만들든지, 그러기 싫다면, 아래와 같이 Map 자료구조를 쓰면 됨. 
 		
-		return null;
+		Map<String, String> map = new HashMap<>();
+		
+		map.put("authKey", authKey);
+		map.put("email", email);
+		
+		// - 1) 이미 이메일 인증을 시도했던 경우를 고려하여
+		// 		수정을 먼저 해줘야 함. 
+		// -> 1 반환 == 업데이트 성공 == 해당이메일로 조회된 이미 존재해서 인증번호 변경
+		// -> 0반환 == 업데이트 실패 == 이메일 존재 X -> INSERT 시도
+		
+		int result  = mapper.updateAuthKey(map);
+		if(result == 0) {
+			result = mapper.insertAuthKey(map);
+		}
+		
+		//수정, 삽입 후에도 result 가 0이라는 건 실패
+		if(result == 0) {return null;}
+		
+		//성공
+		return authKey; // 오류없이 완료되면 authKey 반환
+
 	}
 	
+	/** HTML 파일을 읽어와서 String 으로 변환해주는 메서드(타임리프 적용)
+	 * @param authKey
+	 * @param htmlName
+	 * @return
+	 */
+	private String loadHtml(String authKey, String htmlName) {
+		
+		// org.thymeleaf.Context  선택
+		// Context 타입 객체는 타임리프가 적용된 HTML 상에서 사용할 값을 세팅할 수 있는 객체이다.
+		Context context = new Context();
+		
+		// 타임리프가 적용된 HTML 에서 사용할 값 추가.
+		context.setVariable("authKey", authKey); // authKey 에는 난수가 담겨있음. 
+		
+		return templateEngine.process("email/" + htmlName, context);  
+		// 첫번째 파라미터는 경로다. 시작은 templates 디렉토리부터 시작. 
+		// 그래서, src/main/resources/templates/email/signup.html 이라는 html 과 
+		// 우리가 loadHtml 에서 Context 타입객체에 쑤셔넣은 데이터들을 가지고, 
+		// html 을 만든 다음 -> 그 html 을 String 으로 변환해서 리턴함. 
+	}
+
 	/** 인증번호 생성 (영어 대문자 + 소문자 + 숫자 6자리)
 	    * @return authKey
 	    */
@@ -107,6 +173,12 @@ public class EamilServiceImpl implements EmailService{
 	       }
 	       return key;
 	   }
+
+	   //이메일 , 인증번호 전달
+	@Override
+	public int checkAuthKey(Map<String, Object> map) {
+		return mapper.checkAuthKey(map);
+	}
 
 	
 	

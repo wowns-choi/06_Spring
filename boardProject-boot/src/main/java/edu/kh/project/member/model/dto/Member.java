@@ -28,4 +28,6 @@ public class Member {
 	private String enrollDate; //오라클에서는 Date 타입이었으나, String 타입으로 가져올거임. 
 	private String memberDelFl;
 	private int atuthority; // 관리자인지 여부를 따지는 컬럼임. 
+	
+	
 }
