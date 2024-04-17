@@ -1,5 +1,9 @@
 package edu.kh.project.member.model.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -90,7 +94,9 @@ public class MemberServiceImpl implements MemberService{
 		// inputMember.getMemberAddress() -> ' , , '
 		// memberAddress -> [, ,]
 		
-		if(!inputMember.getMemberAddress().equals(", ,")) {
+//		log.debug("===================={}", inputMember.getMemberAddress().equals(",,"));
+		
+		if(!inputMember.getMemberAddress().equals(",,")) {
 			
 			// String.join("구분자", 배열)
 			// => 배열의 모든 요소 사이에 "구분자"를 추가하여 하나의 문자열로 만들어 반환하는 메서드
@@ -119,7 +125,54 @@ public class MemberServiceImpl implements MemberService{
 		return mapper.signup(inputMember);
 
 	}
-	
+
+	@Override
+	public Member testLogin(String memberEmail) {
+		
+		return mapper.testLogin(memberEmail);
+		
+
+	}
+
+	@Override
+	public Member quickLogin(String memberEmail) {
+		Member loginMember = mapper.login(memberEmail);
+		if(loginMember != null) {
+			loginMember.setMemberPw(null);
+			return loginMember;
+		} else {
+			return null;
+		}
+
+
+	}
+
+	@Override
+	public List<Member> selectMemberList() {
+		List<Member> list = mapper.selectMemberList();
+		return list;
+	}
+
+	@Override
+	public int updatePwToPass01(String inputMemberNo) {
+		
+		String password = bCryptPasswordEncoder.encode("pass01!");
+		
+		Map<String, String> map = new ConcurrentHashMap<>();
+		map.put("password", password);
+		map.put("inputMemberNo", inputMemberNo);
+		
+		int result = mapper.updatePwToPass01(map);
+		
+		return result;
+	}
+
+	@Override
+	public int updateMemberDelFl(String updateMemberDelFl) {
+		
+		return  mapper.updateMemberDelFl(updateMemberDelFl);
+		
+	}
 	
 }
 

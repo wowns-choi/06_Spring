@@ -106,3 +106,123 @@ if(loginForm != null){
     })
 
 }
+/*
+const testLogin = document.querySelector('#test-login');
+
+
+testLogin.addEventListener('click', function(e){
+	
+	fetch('/member/testLogin?memberEmail=' + testLogin.innerText)
+	.then(resp => resp.text())
+	.then(result => {
+		
+		if(result == 1){
+			// 멤버를 찾은 경우
+			window.location.href = '/';
+		}
+		else{
+			alert('존재하지 않는 아이디입니다.');
+		}
+	})
+	.catch(error => console.log((error)))
+	
+	
+})
+
+*/
+
+/* 빠른 로그인 */
+const quickLoginBtns = document.querySelectorAll(".quick-login");
+
+quickLoginBtns.forEach((item, index) => {
+    // item : 현재 반복 시 꺼내온 객체
+    // index : 현재 반복 중인 인덱스
+
+    // quickLoginBtns 요소인 button 태그 하나씩 꺼내서 이벤트 리스너 추가
+    item.addEventListener("click", () => { // 각 버튼에 클릭 이벤트 추가
+        const email = item.innerText; // 버튼에 작성된 이메일 얻어오기
+
+        location.href = "/member/quickLogin?memberEmail=" + email;
+    })
+});
+
+const selectMemberList = document.querySelector("#selectMemberList");
+
+const tbody = document.querySelector("#tbody");
+
+selectMemberList.addEventListener('click', function(e){
+	
+	fetch('/member/selectMemberList')
+	.then(resp => resp.json())
+	.then(result => {
+		result.forEach((item, index) =>  {
+			let tr = document.createElement("tr");
+			
+			let td1 = document.createElement("td");
+			td1.innerText = item.memberNo;
+			let td2 = document.createElement("td");
+			td2.innerText = item.memberEmail;
+			let td3 = document.createElement("td");
+			td3.innerText = item.memberNickname;
+			let td4 = document.createElement("td");
+			td4.innerText = item.memberDelFl;
+			
+			tr.append(td1);
+			tr.append(td2);
+			tr.append(td3);
+			tr.append(td4);
+			tbody.append(tr);			
+		})
+
+		
+	})
+	.catch(err => console.log(err));
+})
+
+const memberNo1 = document.querySelector('#resetMemberNo'); //input 1
+const resetPwBtn = document.querySelector('#resetPw'); //input 1
+
+resetPwBtn.addEventListener('click', function(e){
+	let inputMemberNo = memberNo1.value;
+	fetch('/member/updatePwToPass01?inputMemberNo=' + inputMemberNo)
+	.then(resp => resp.text())
+	.then(result => {
+		
+		if(result == 1){
+			alert('비밀번호 변경 잘됨');
+		}else{
+			alert('비밀번호 변경 중 오류발생');
+		}
+	})
+})
+
+
+
+//----------------------------------------------
+const memberNo2 = document.querySelector('#restorationMemberNo'); //inpu2
+const resetorationBtn = document.querySelector('#resetorationBtn'); //input 1
+
+resetorationBtn.addEventListener('click', function(e){
+	
+	let memberNo2Value = memberNo2.value;
+	
+	// 클릭하면, fetch 로 탈퇴복구할 회원번호 전달
+	fetch('/member/restore?updateMemberDelFl=' + memberNo2Value)
+	.then(resp => resp.text())
+	.then(result => {
+		alert('aaaaaaaaaaaaaa' + result);
+		
+		if(result == 1){
+			alert('회원 복구됨');
+		} else{
+			alert('복구중 예외 발생');
+		}
+		
+		
+		
+		
+	})	
+})
+
+
+

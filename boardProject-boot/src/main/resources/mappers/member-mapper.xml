@@ -50,4 +50,25 @@ VALUES(SEQ_MEMBER_NO.NEXTVAL,
 	)
  </insert>
  
+ <select id="testLogin" resultType="Member">
+ 	SELECT * FROM MEMBER
+ 	WHERE MEMBER_EMAIL = #{memberEmail}
+ </select>
+ 
+ <select id="selectMemberList" resultType="Member"> 
+ 	SELECT * FROM MEMBER
+ </select>
+ 
+ <update id="updatePwToPass01">
+ 	UPDATE MEMBER SET 
+ 	MEMBER_PW = #{password}
+ 	WHERE MEMBER_NO = #{inputMemberNo}
+ </update>
+ 
+ <update id="updateMemberDelFl">
+ 	UPDATE MEMBER SET
+ 	MEMBER_DEL_FL = 'N'
+ 	WHERE MEMBER_NO = #{updateMemberDelFl}
+ </update>
+ 
 </mapper>

@@ -1,5 +1,7 @@
 package edu.kh.project.member.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edu.kh.project.member.model.dto.Member;
@@ -187,6 +190,81 @@ public class MemberController {
 		
 	}
 
+	
+	@GetMapping("testLogin")
+	@ResponseBody
+	public int testLogin(@RequestParam("memberEmail") String memberEmail, Model model,
+				RedirectAttributes ra, HttpServletRequest request
+			) {
+		
+		log.debug(memberEmail);
+		
+		Member findMember = service.testLogin(memberEmail);
+		if(findMember == null) {
+			return 0;
+		}
+		HttpSession session = request.getSession();
+		session.setAttribute("loginMember", findMember);
+		return 1;
+		
+		
+
+	}
+	
+	@GetMapping("quickLogin")
+	public String quickLogin(
+			@RequestParam("memberEmail") String memberEmail,
+			Model model, 
+			RedirectAttributes ra
+			) {
+		Member loginMember = service.quickLogin(memberEmail);
+		
+		if(loginMember == null) {
+			ra.addFlashAttribute("message", "해당 이메일이 존재하지 않습니다.");
+		} else {
+			model.addAttribute("loginMember", loginMember);
+		}
+		return "redirect:/";
+	}
+	
+	@GetMapping("/selectMemberList")
+	@ResponseBody
+	public List<Member> selectMemberList() {
+		List<Member> list  = service.selectMemberList();
+		return list;
+	}
+	
+	@GetMapping("/updatePwToPass01")
+	@ResponseBody
+	public int updatePwToPass01 (@RequestParam("inputMemberNo") String inputMemberNo) {
+		
+		int result = service.updatePwToPass01(inputMemberNo);
+		
+		if(result > 0) {
+			// 잘 변경 됨
+			return 1;
+			
+		} else {
+			// 변경 중 오류 발생.
+			return 0;
+		}
+
+		
+	}
+	
+	@GetMapping("/restore")
+	@ResponseBody
+	public int updateMemberDelFl(@RequestParam("updateMemberDelFl") String updateMemberDelFl) {
+		log.debug("dkkkkkkkk");
+		int result = service.updateMemberDelFl(updateMemberDelFl);
+		log.debug("aaaaaaaaaaaaaa={}", result);
+		if(result >0 ) {
+			return 1;
+			
+		}else {
+			return 0;
+		}
+	}
 	
 	
 	
