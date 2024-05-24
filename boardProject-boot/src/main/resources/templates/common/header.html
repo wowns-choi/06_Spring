@@ -36,8 +36,17 @@
     </section>
   
   
-    <!-- 안쓰는 섹션 -->
-    <section></section>
+    <!-- 날씨 api 이용 -->
+    <section id="weather-section">
+		<div class="weather-info">
+			<!--
+			<i class="fa-solid fa-sun"></i>
+			<spna>맑음</spna>
+			<p>기온 : 13도</p>
+			<p>비 올 확률 : 0%</p>
+			-->
+		</div>	
+	</section>
   
   
   </header>
@@ -55,5 +64,10 @@
       <li>
         <a href="#">질문 게시판</a>
       </li>
+	  <li class="chatting-li">
+		<a th:href="@{/chatting/list}" th:text="채팅">채팅</a>
+	  </li>
     </ul>
   </nav>
+  
+  

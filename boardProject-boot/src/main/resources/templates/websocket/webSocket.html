@@ -1,0 +1,120 @@
+<!--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        #chat-page {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        #messageArea {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+        }
+        
+        #messageForm {
+            display: flex;
+        }
+        
+        #message {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-page">
+        <div id="chat">
+            <ul id="messageArea"></ul>
+            <div id="messageForm">
+                <input type="text" id="message" placeholder="Type a message..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+	
+	<!-- SockJS 및 STOMP 라이브러리 추가 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	
+	
+    <script th:inline="javascript">
+		
+		let memberNo = /*[[${session.loginMember.memberNo}]]*/ 'memberNo';
+		
+        var stompClient = null;
+		let groupTitle = 1; 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            connect();
+        });
+
+        function connect() {
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+				
+				// subscribe의 첫번째 매개변수가 이제 이 클라이언트의 주소라고 보면 됨. 
+                stompClient.subscribe('/topic/' + groupTitle, function (chatMessage) {
+					// chatMessage 는 구독한 그 채널에서 자동으로 발송된 서버의 메세지를 말함. 
+                    showMessage(JSON.parse(chatMessage.body));
+                });
+            });
+        }
+        
+		
+        function sendMessage() {
+            var messageContent = document.getElementById('message').value.trim();
+            if(messageContent && stompClient) { // 메세지 쓴게 있고, 소켓연결이 제대로 됬다면 
+                var chatMessage = {
+                    sender: memberNo, // 실제 사용자 이름으로 변경해야 함
+                    content: messageContent,
+                    type: 'CHAT'
+                };
+                stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+                document.getElementById('message').value = '';
+            }
+        }
+        
+		
+        function showMessage(message) {
+            var messageArea = document.getElementById('messageArea');
+            var messageElement = document.createElement('li');
+            messageElement.classList.add('chat-message');
+            var textElement = document.createElement('p');
+            var messageText = document.createTextNode(message.content);
+            textElement.appendChild(messageText);
+            messageElement.appendChild(textElement);
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+    </script>
+	
+</body>
+</html> -->

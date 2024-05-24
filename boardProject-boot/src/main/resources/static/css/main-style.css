@@ -443,3 +443,18 @@
   .content-1 hr{
     margin: 20px 0;
   }
+  
+  /* 날씨 부분 */
+  #weather-section{
+	display: flex; 
+	align-items: center;
+  }
+  
+  .weather-info{
+	font-size: 20px; 
+  }
+  
+  
+  
+  
+  
